@@ -17,17 +17,13 @@ struct NoteEvent {
 }
 
 impl fmt::Display for NoteEvent {
-    // This trait requires `fmt` with this exact signature.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Write strictly the first element into the supplied output
-        // stream: `f`. Returns `fmt::Result` which indicates whether the
-        // operation succeeded or failed. Note that `write!` uses syntax which
-        // is very similar to `println!`.
         write!(f, "{} {} {}", self.note, self.time_stamp, self.seconds)
     }
 }
 
 fn main() {
+    let est_tz = FixedOffset::west(5 * 3600);
     let mut session_name = String::new();
     let mut vec = Vec::new();
     println!("Title of Recording :");
@@ -39,11 +35,8 @@ fn main() {
     loop {
         // record time stamp
         let now: DateTime<Utc> = Utc::now();
-        let est_tz = FixedOffset::west(5 * 3600);
-        println!(
-            "Timestamp is: {}",
-            now.with_timezone(&est_tz).format("%a %b %e %T")
-        );
+        let time_stamp = now.with_timezone(&est_tz).format("%a %b %e %T");
+        println!("Timestamp is: {}", time_stamp);
         // record note
         let mut note = String::new();
         println!("Note:");
@@ -52,7 +45,7 @@ fn main() {
         println!("Seconds:");
         let seconds: u16 = read!();
         let current_note_event = NoteEvent {
-            time_stamp: now.with_timezone(&est_tz).format("%a %b %e %T").to_string(),
+            time_stamp: time_stamp.to_string(),
             note: note,
             seconds: seconds,
         };
